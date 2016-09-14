@@ -1,0 +1,396 @@
+def valid_ip_address(ip_address):
+    parts = ip_address.split(".")
+    if len(parts) != 4:
+        return False
+    for item in parts:
+        if not 0 <= int(item) <= 255:
+            return False
+    return True
+
+
+def validate_input_parameter_values():
+    """ 
+    Validates the database name does not contain any special characters 
+    """
+    pattern0 = r'[a-zA-Z0-9_.]*$'
+    pattern1 = r'[^a-zA-Z0-9_]'
+    pattern2 = r'[^A-Z]'
+    pattern3 = r'[^A-Z_]'
+    pattern4 = r'[A-Z_]*$'
+    
+    if params['User Defined Primary HADR TSA Config File']:
+        if re.search(pattern0, params['User Defined Primary HADR TSA Config File']):
+            if os.path.isabs(params['User Defined Primary HADR TSA Config File']):
+                steplog.info("Please provide the User Defined Primary HADR Config Filename without the absolute path")
+                steplog.error('Please provide the User Defined Primary HADR Config Filename without the absolute path %s' % params['User Defined Primary HADR TSA Config File'])
+                sys.exit(1)
+            else:
+                steplog.info('Valid primary HADR Config file name entered : %r' % params['User Defined Primary HADR TSA Config File'])
+        else:
+            steplog.error('Invalid primary HADR config file name entered : %r' % params['User Defined Primary HADR TSA Config File'])
+            sys.exit(1)
+          
+    if params['User Defined Standby HADR TSA Config File']:
+        if re.search(pattern0, params['User Defined Standby HADR TSA Config File']):
+            if os.path.isabs(params['User Defined Standby HADR TSA Config File']):
+                steplog.info("Please provide the User Defined Standby HADR Config Filename without the absolute path")
+                steplog.error('Please provide the User Defined Standby HADR Config Filename without the absolute path %s' % params['User Defined Standby HADR TSA Config File'])
+                sys.exit(1)
+            else:
+                steplog.info('Valid primary HADR Config file name entered : %r' % params['User Defined Standby HADR TSA Config File'])
+        else:
+            steplog.error('Invalid primary HADR config file name entered : %r' % params['User Defined Standby HADR TSA Config File'])
+            sys.exit(1)    
+
+    hadr_port = params['DB2 Local Instance Port Number'].strip()
+    if hadr_port:
+        if hadr_port.isdigit():
+            hadr_port_length = len(hadr_port)
+            hadr_port_length = int(hadr_port_length)
+            if hadr_port_length >= 5:
+                steplog.info("Valid DB2 HADR Port Number value entered : %s " % params['DB2 Local Instance Port Number'])
+            else:
+                steplog.warn("DB2 HADR Port number %s may not be usable" % hadr_port)
+        else:
+            steplog.error("Invalid DB2 HADR Port Number value entered : %s " % params['DB2 Local Instance Port Number'])
+            sys.exit(1)
+
+    hadr_port = params['DB2 Remote Instance Port Number'].strip()
+    if hadr_port:
+        if hadr_port.isdigit():
+            hadr_port_length = len(hadr_port)
+            hadr_port_length = int(hadr_port_length)
+            if hadr_port_length >= 5:
+                steplog.info("Valid DB2 HADR Port Number value entered : %s " % params['DB2 Remote Instance Port Number'])
+            else:
+                steplog.warn("DB2 HADR Port number %s may not be usable" % hadr_port)
+        else:
+            steplog.error("Invalid DB2 HADR Port Number value entered : %s " % params['DB2 Remote Instance Port Number'])
+            sys.exit(1)
+
+    if params['DB2 HADR Cluster Domain Name']:
+        if re.search(pattern0, params['DB2 HADR Cluster Domain Name']):
+            steplog.info("Valid DB2 HADR Cluster Domain Name value entered : %s " % params['DB2 HADR Cluster Domain Name'])
+        else:
+            steplog.error("Invalid DB2 HADR Cluster Domain Name value entered : %s " % params['DB2 HADR Cluster Domain Name'])
+            sys.exit(1)
+    else:
+        steplog.error("DB2 HADR cluster domain name parameter value is missing. Please check")
+        sys.exit(1)
+
+    if params['DB2 HADR Remote Instance Name']:
+        if re.search(pattern0, params['DB2 HADR Remote Instance Name']):
+            steplog.info("Valid DB2 HADR Remote Instance Name value entered : %s " % params['DB2 HADR Remote Instance Name'])
+        else:
+            steplog.error("Invalid DB2 HADR Remote Instance Name value entered : %s " % params['DB2 HADR Remote Instance Name'])
+            sys.exit(1)
+    else:
+        steplog.error("No value for the DB2 HADR Remote Instance Name is entered. Please check")
+        sys.exit(1)
+
+    if params['Subnet Mask for Primary Cluster Node']:
+        ip_address = params['Subnet Mask for Primary Cluster Node']
+        ip_status = valid_ip_address(ip_address)
+        if ip_status = True:
+            steplog.info("Valid Subnet Mask for Primary Cluster Node value entered : %s " % params['Subnet Mask for Primary Cluster Node'])
+        else:
+            steplog.error("Invalid Subnet Mask for Primary Cluster Node value entered : %s " % params['Subnet Mask for Primary Cluster Node'])
+            sys.exit(1)
+    else:
+        steplog.error("No value for the Subnet Mask of Primary Cluster Node is entered. Please check")
+        sys.exit(1)
+
+    if params['Subnet Mask for Standby Cluster Node']:
+        ip_address = params['Subnet Mask for Standby Cluster Node']
+        ip_status = valid_ip_address(ip_address)
+        if ip_status = True:
+            steplog.info("Valid Subnet Mask for Standby Cluster Node value entered : %s " % params['Subnet Mask for Standby Cluster Node'])
+        else:
+            steplog.error("Invalid Subnet Mask for Standby Cluster Node value entered : %s " % params['Subnet Mask for Standby Cluster Node'])
+            sys.exit(1)
+    else:
+        steplog.error("No value for the Subnet Mask for Standby Cluster Node is entered. Please check")
+        sys.exit(1)
+
+    if params['DB2 HADR Quorum Device Name']:
+        ip_address = params['DB2 HADR Quorum Device Name']
+        ip_status = valid_ip_address(ip_address)
+        if ip_status = True:
+            steplog.info("Valid DB2 HADR Quorum Device Name value entered : %s " % params['DB2 HADR Quorum Device Name'])
+        else:
+            steplog.error("Invalid DB2 HADR Quorum Device Name value entered : %s " % params['DB2 HADR Quorum Device Name'])
+            sys.exit(1)
+    else:
+        steplog.error("No value for the DB2 HADR Quorum Device Name is entered. Please check")
+        sys.exit(1)
+
+    if params['DB2 HADR Quorum Device Protocol']:
+        quorum_protocol = params['DB2 HADR Quorum Device Name']
+        supported_net_list = ['network']
+        if quorum_protocol in supported_net_list:
+            steplog.info("Valid DB2 HADR Quorum Device Protocol value entered : %s " % params['DB2 HADR Quorum Device Protocol'])
+        else:
+            steplog.error("Invalid DB2 HADR Quorum Device Protocol value entered : %s " % params['DB2 HADR Quorum Device Protocol'])
+            sys.exit(1)
+    else:
+        steplog.error("No value for the DB2 HADR Quorum Device Protocol is entered. Please check")
+        sys.exit(1)
+
+    if params['DB2 HADR Physical Network Protocol']:
+        phy_net_protocol = params['DB2 HADR Physical Network Protocol']
+        supported_phy_net_list = ['ip']
+        if phy_net_protocol in supported_phy_net_list:
+            steplog.info("Valid DB2 HADR Physical Network Protocol value entered : %s " % params['DB2 HADR Physical Network Protocol'])
+        else:
+            steplog.error("Invalid DB2 HADR Physical Network Protocol value entered : %s " % params['DB2 HADR Physical Network Protocol'])
+            sys.exit(1)
+    else:
+        steplog.error("No value for the DB2 HADR Physical Network Protocol is entered. Please check")
+        sys.exit(1)
+
+    if params['Secondary Physical Network Protocol']:
+        phy_net_protocol = params['Secondary Physical Network Protocol']
+        supported_phy_net_list = ['ip']
+        if phy_net_protocol in supported_phy_net_list:
+            steplog.info("Valid Secondary Physical Network Protocol value entered : %s " % params['Secondary Physical Network Protocol'])
+        else:
+            steplog.error("Invalid Secondary Physical Network Protocol value entered : %s " % params['Secondary Physical Network Protocol'])
+            sys.exit(1)
+
+    if params['DB2 HADR Cluster Domain Name']:
+        if re.search(pattern0, params['DB2 HADR Cluster Domain Name']):
+            steplog.info("Valid DB2 HADR Cluster Domain Name value entered : %s " % params['DB2 HADR Cluster Domain Name'])
+        else:
+            steplog.error("Invalid DB2 HADR Cluster Domain Name value entered : %s " % params['DB2 HADR Cluster Domain Name'])
+            sys.exit(1)
+    else:
+        steplog.error("No value for the DB2 HADR Cluster Domain Name is entered. Please check")
+        sys.exit(1)
+
+    if params['DB2 HADR Cluster Manager Name']:
+        if re.search(pattern0, params['DB2 HADR Cluster Manager Name']):
+            steplog.info("Valid DB2 HADR Cluster Manager Name value entered : %s " % params['DB2 HADR Cluster Manager Name'])
+        else:
+            steplog.error("Invalid DB2 HADR Cluster Manager Name value entered : %s " % params['DB2 HADR Cluster Manager Name'])
+            sys.exit(1)
+    else:
+        steplog.error("No value for the DB2 HADR Cluster Manager Name is entered. Please check")
+        sys.exit(1)
+
+    if params['DB2 HADR Physical Network Name']:
+        if re.search(pattern0, params['DB2 HADR Physical Network Name']):
+            steplog.info("Valid DB2 HADR Physical Network Name value entered : %s " % params['DB2 HADR Physical Network Name'])
+        else:
+            steplog.error("Invalid DB2 HADR Physical Network Name value entered : %s " % params['DB2 HADR Physical Network Name'])
+            sys.exit(1)
+    else:
+        steplog.error("No value for the DB2 HADR Physical Network Name is entered. Please check")
+        sys.exit(1)
+
+    if params['Secondary Physical Network Name']:
+        if re.search(pattern0, params['Secondary Physical Network Name']):
+            steplog.info("Valid Secondary Physical Network Name value entered : %s " % params['Secondary Physical Network Name'])
+        else:
+            steplog.error("Invalid Secondary Physical Network Name value entered : %s " % params['Secondary Physical Network Name'])
+            sys.exit(1)
+
+    partition_number = params['DB2 HADR DB Partition Number'].strip()
+    if partition_number:
+        if partition_number.isdigit():
+            partition_number_length = len(partition_number)
+            if partition_number_length == 1:
+                steplog.info("Valid DB2 HADR DB Partition Number value entered : %s " % params['DB2 HADR DB Partition Number'])
+            elif partition_number_length > 1 or partition_number_length < 1:
+                steplog.warn("DDB2 HADR DB Partition Number %s may not be usable" % partition_number)
+        else:
+            steplog.error("Invalid DB2 HADR Port Number value entered : %s " % params['DB2 HADR DB Partition Number'])
+            sys.exit(1)
+    else:
+        steplog.error("No value for DB2 HADR DB Partition Number is entered. Please check")
+        sys.exit(1)
+
+    if params['Clean on Failure']:
+        clean_failure = params['Clean on Failure']
+        clean_failure = clean_failure.lower()
+        clean_failure_list = ['yes', 'y', 'true', 'false', 'no', 'n']
+        if clean_failure in clean_failure_list:
+            steplog.info("Valid Clean on Failure value entered : %s " % params['Clean on Failure'])
+        else:
+            steplog.error("Invalid Clean on Failure value entered : %s " % params['Clean on Failure'])
+            sys.exit(1)
+    else:
+        steplog.error("No value for the Clean on Failure is entered. Please check")
+        sys.exit(1)
+
+
+    if params['DB2 HADR Interface Name']:
+        interface = params['DB2 HADR Interface Name']
+        supported_interface_list = ['eth0', 'en0']
+        if interface in supported_interface_list:
+            steplog.info("Valid DB2 HADR Interface Name value entered : %s " % params['DB2 HADR Interface Name'])
+        else:
+            steplog.error("Invalid DB2 HADR Interface Name value entered : %s " % params['DB2 HADR Interface Name'])
+            sys.exit(1)
+    else:
+        steplog.error("No value for the DB2 HADR Interface Name is entered. Please check")
+        sys.exit(1)
+
+    if params['Secondary Network Interface Name']:
+        interface = params['Secondary Network Interface Name']
+        interface = interface.lower()
+        supported_interface_list = ['eth1', 'eth2', 'eth3']
+        if interface in supported_interface_list:
+            steplog.info("Valid Secondary Network Interface Name value entered : %s " % params['Secondary Network Interface Name'])
+        else:
+            steplog.error("Invalid Secondary Network Interface Name value entered : %s " % params['Secondary Network Interface Name'])
+            sys.exit(1)
+
+    if params['DB2 HADR Database Name']:
+        db_name = params['DB2 HADR Database Name'].strip()
+        db_name_length = len(db_name)
+        db_name = db_name.upper()
+        if re.search(pattern0, db_name):
+            if db_name_length > 8:
+                steplog.error("Invalid char length of DB2 HADR Database Name value entered : %s " % params['DB2 HADR Database Name'])
+                sys.exit(1)
+            else:
+                steplog.info("Valid DB2 HADR Database Name value entered : %s " % params['DB2 HADR Database Name'])
+        else:
+            steplog.error("Invalid DB2 HADR Database Name value entered : %s " % params['DB2 HADR Database Name'])
+            sys.exit(1)
+    else:
+        steplog.error("No value for DB2 HADR Database Name is entered. Please Check")
+        sys.exit(1)
+
+    if params['Secondary Private IP for Primary Node']:
+        ip_address = params['Secondary Private IP for Primary Node']
+        ip_status = valid_ip_address(ip_address)
+        if ip_status = True:
+            steplog.info("Valid Secondary Private IP for Primary Node : %s " % params['Secondary Private IP for Primary Node'])
+            hostname = params['Secondary Private IP for Primary Node']
+            cmd = 'ping -c 1 %s' % hostname
+            response = os.system(cmd)
+            if response == 0:
+                steplog.info("Primary host %s is up and running." % hostname)
+            else:
+                steplog.error("Primary host %s is down. Please Check" % hostname)
+                sys.exit(1)
+        else:
+            steplog.error("Invalid Secondary Private IP for Primary Node : %s " % params['Secondary Private IP for Primary Node'])
+            sys.exit(1)
+
+    if params['Secondary Private IP for Standby Node']:
+        ip_address = params['Secondary Private IP for Standby Node']
+        ip_status = valid_ip_address(ip_address)
+        if ip_status = True:
+            steplog.info("Valid Secondary Private IP for Primary Node : %s " % params['Secondary Private IP for Standby Node'])
+            hostname = params['Secondary Private IP for Standby Node']
+            cmd = 'ping -c 1 %s' % hostname
+            response = os.system(cmd)
+            if response == 0:
+                steplog.info("Standby host %s is up and running." % hostname)
+            else:
+                steplog.error("Standby host %s is down. Please Check" % hostname)
+                sys.exit(1)
+        else:
+            steplog.error("Invalid Secondary Private IP for Standby Node : %s " % params['Secondary Private IP for Standby Node'])
+            sys.exit(1)
+
+    if params['Secondary Private Network']:
+        sec_private_net = params['Secondary Private Network']
+        sec_private_net = sec_private_net.lower()
+        supported_sec_private_net = ['y','yes','true','no','n','false']
+        if sec_private_net in supported_sec_private_net:
+            steplog.info("Valid Secondary Private Network value entered : %s " % params['Secondary Private Network'])
+        else:
+            steplog.error("Invalid Secondary Private Network value entered : %s " % params['Secondary Private Network'])
+            sys.exit(1)
+    else:
+        steplog.error("No value for the Secondary Private Network is entered. Please check")
+        sys.exit(1)
+
+    if params['Secondary Subnetmask']:
+        ip_address = params['Secondary Subnetmask']
+        ip_status = valid_ip_address(ip_address)
+        if ip_status = True:
+            steplog.info("Valid Secondary Subnetmask value entered : %s " % params['Secondary Subnetmask'])
+        else:
+            steplog.error("Invalid Secondary Subnetmask value entered : %s " % params['Secondary Subnetmask'])
+            sys.exit(1)
+
+    if params['DB2 HADR Primary Cluster Node Name']:
+        if re.search(pattern0, params['DB2 HADR Primary Cluster Node Name']):
+            steplog.info("Valid DB2 HADR Primary Host Name : %s " % params['DB2 HADR Primary Cluster Node Name'])
+            hostname = params['DB2 HADR Primary Cluster Node Name']
+            cmd = 'ping -c 1 %s' % hostname
+            response = os.system(cmd)
+            if response == 0:
+                steplog.info("Primary host %s is up and running." % hostname)
+            else:
+                steplog.error("Primary host %s is down. Please Check" % hostname)
+                sys.exit(1)
+        else:
+            steplog.error("Invalid DB2 HADR Primary Cluster Node Name : %s " % params['DB2 HADR Primary Cluster Node Name'])
+            sys.exit(1)
+
+    if params['DB2 HADR Standby Cluster Node Name']:
+        if re.search(pattern0, params['DB2 HADR Standby Cluster Node Name']):
+            steplog.info("Valid DB2 HADR Standby Host Name : %s " % params['DB2 HADR Standby Cluster Node Name'])
+            hostname = params['DB2 HADR Standby Cluster Node Name']
+            cmd = 'ping -c 1 %s' % hostname
+            response = os.system(cmd)
+            if response == 0:
+                steplog.info("Standby host %s is up and running." % hostname)
+            else:
+                steplog.error("Standby host %s is down. Please Check" % hostname)
+                sys.exit(1)
+        else:
+            steplog.error("Invalid DB2 HADR Standby Cluster Node Name : %s " % params['DB2 HADR Standby Cluster Node Name'])
+            sys.exit(1)
+
+    if params['Local Host IP Address For Primary Node']:
+        ip_address = params['Local Host IP Address For Primary Node']
+        ip_status = valid_ip_address(ip_address)
+        if ip_status = True:
+            steplog.info("Valid DB2 HADR Primary Host Name : %s " % params['Local Host IP Address For Primary Node'])
+            hostname = params['Local Host IP Address For Primary Node']
+            cmd = 'ping -c 1 %s' % hostname
+            response = os.system(cmd)
+            if response == 0:
+                steplog.info("Primary host %s is up and running." % hostname)
+            else:
+                steplog.error("Primary host %s is down. Please Check" % hostname)
+                sys.exit(1)
+        else:
+            steplog.error("Invalid DB2 HADR Primary Host Name : %s " % params['DB2 HADR Primary Host Name'])
+            sys.exit(1)
+    else:
+        steplog.error("No value entered for Local Host IP Address For Primary Node. Please Check")
+        sys.exit(1)
+
+    
+    if params['Local Host IP Address For Standby Node']:
+        ip_address = params['Local Host IP Address For Standby Node']
+        ip_status = valid_ip_address(ip_address)
+        if ip_status = True:
+            steplog.info("Valid DB2 HADR Standby Host Name : %s " % params['Local Host IP Address For Standby Node'])
+            hostname = params['Local Host IP Address For Standby Node']
+            cmd = 'ping -c 1 %s' % hostname
+            response = os.system(cmd)
+            if response == 0:
+                steplog.info("Standby host %s is up and running." % hostname)
+            else:
+                steplog.error("Standby host %s is down. Please Check" % hostname)
+                sys.exit(1)
+        else:
+            steplog.error("Invalid DB2 HADR Standby Host Name : %s " % params['DB2 HADR Standby Host Name'])
+            sys.exit(1)
+    else:
+        steplog.error("No value entered for Local Host IP Address For Standby Node. Please Check")
+        sys.exit(1)
+
+    if params['DB2 Archive Location']:
+        if not os.path.isabs(params['DB2 Archive Location']):
+            steplog.error("Invalid DB2 Archive Location %s is entered" % params['DB2 Archive Location'])
+            steplog.info("Please enter the appropriate absolute path for DB2 Archive Location")
+            sys.exit(1)
